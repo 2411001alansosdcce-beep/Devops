@@ -21,9 +21,11 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      # This installs Gradle automatically so you don't need a gradlew file
+      # Added a specific fallback version so it doesn't look for a wrapper file
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.5'
 
       - name: Build Application
         run: gradle assembleDebug
@@ -49,9 +51,11 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      # This installs Gradle for your test stage too
+      # Added the same fallback version here too
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.5'
 
       - name: Test Application
         run: gradle test
