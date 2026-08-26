@@ -13,16 +13,13 @@ jobs:
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
-
-      - name: Give Permission
-        run: chmod +x gradlew
 
       - name: Build Application
         run: ./gradlew assembleDebug
@@ -33,7 +30,6 @@ jobs:
           name: Android-App
           path: app/build/outputs/apk/debug/app-debug.apk
 
-
   test:
     name: Test Application
     runs-on: ubuntu-latest
@@ -41,7 +37,7 @@ jobs:
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
       - name: Setup Java
         uses: actions/setup-java@v4
@@ -49,12 +45,8 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Give Permission
-        run: chmod +x gradlew
-
-      - name: Run Tests
+      - name: Test Application
         run: ./gradlew test
-
 
   deploy:
     name: Deploy Application
@@ -62,5 +54,11 @@ jobs:
     needs: test
 
     steps:
-      - name: Deployment Completed
-        run: echo "Application build and testing completed successfully"
+      - name: Download APK
+        uses: actions/download-artifact@v4
+        with:
+          name: Android-App
+          path: apk
+
+      - name: Deploy Application
+        run: echo "Application deployed successfully"
