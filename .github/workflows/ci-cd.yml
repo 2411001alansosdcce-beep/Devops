@@ -10,8 +10,13 @@ jobs:
   build:
     name: Build Application
     runs-on: ubuntu-latest
+    # This tells GitHub to run all steps for this job inside the android folder
+    defaults:
+      run:
+        working-directory: ./android
 
     steps:
+      # Checkout happens at root, so no working directory needed for this step
       - name: Checkout Code
         uses: actions/checkout@v4
 
@@ -31,12 +36,16 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Android-App
-          path: app/build/outputs/apk/debug/app-debug.apk
+          # Updated path to include your subfolder
+          path: android/app/build/outputs/apk/debug/app-debug.apk
 
   test:
     name: Test Application
     runs-on: ubuntu-latest
     needs: build
+    defaults:
+      run:
+        working-directory: ./android
 
     steps:
       - name: Checkout Code
