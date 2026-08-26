@@ -10,13 +10,8 @@ jobs:
   build:
     name: Build Application
     runs-on: ubuntu-latest
-    # This tells GitHub to run all steps for this job inside the android folder
-    defaults:
-      run:
-        working-directory: ./android
 
     steps:
-      # Checkout happens at root, so no working directory needed for this step
       - name: Checkout Code
         uses: actions/checkout@v4
 
@@ -26,26 +21,23 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Give Permission
-        run: chmod +x gradlew
+      # This installs Gradle automatically so you don't need a gradlew file
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
 
       - name: Build Application
-        run: ./gradlew assembleDebug
+        run: gradle assembleDebug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: Android-App
-          # Updated path to include your subfolder
-          path: android/app/build/outputs/apk/debug/app-debug.apk
+          path: app/build/outputs/apk/debug/app-debug.apk
 
   test:
     name: Test Application
     runs-on: ubuntu-latest
     needs: build
-    defaults:
-      run:
-        working-directory: ./android
 
     steps:
       - name: Checkout Code
@@ -57,11 +49,12 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Give Permission
-        run: chmod +x gradlew
+      # This installs Gradle for your test stage too
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
 
       - name: Test Application
-        run: ./gradlew test
+        run: gradle test
 
   deploy:
     name: Deploy Application
